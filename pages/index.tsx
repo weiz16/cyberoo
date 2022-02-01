@@ -1,82 +1,104 @@
-import Head from 'next/head'
+import Head from 'next/head';
+import debounce from 'lodash.debounce';
+import React from 'react';
+
+import { ApolloProvider, useQuery } from "@apollo/client";
+import client, { GET_FOLLOWERS } from "./api/search";
+
+export function SearchBar(updateSearch: React.Dispatch<React.SetStateAction<string>>) {
+
+  const handleKeyDown = (ev: React.KeyboardEvent) => {
+    updateSearch((ev?.target as HTMLInputElement)?.value || '');
+  };
+
+  // Debounce keydown handler to reduce search loads
+  const debouncedKeydown = debounce((ev: React.KeyboardEvent) => {
+    handleKeyDown(ev);
+  }, 500);
+
+  const inputClass = "mt-4 placeholder:italic placeholder:text-slate-400 block bg-white w-6/12 border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+  return (
+      <input 
+        className={inputClass}
+        onKeyDown={debouncedKeydown} 
+        placeholder="Search for anything (address, nft, label etc...)"
+        type="text" name="search"/>
+  );
+}
+
+export function Footer() {
+  return (
+    <footer className="flex h-12 w-full items-center justify-center pr-4 border-t">
+      <a
+        className="flex items-center justify-center"
+        href="https://github.com/weiz16"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Contact
+      </a>
+    </footer>
+  );
+}
+
+export function Heading() {
+  return (
+    <>
+      <h1 className="text-6xl font-bold">
+        Cyberoo
+      </h1>
+      <h3 className='pt-2' >Explore all connections!</h3>
+    </>
+  );
+}
+
+export function Result(query: string) {
+  // const { loading, error, data } = useQuery(GET_FOLLOWERS(query));
+
+  
+  // if (loading) {
+  //   return (
+  //     <div className='loading'>
+  //       loading...
+  //     </div>
+  //   );
+  // }
+
+  // if (error) return `Error! ${error.message}`;
+
+  // if (data) {
+  //   return (
+  //     <div className='border border-slate-300 rounded-md p-4 mt-4'>
+  //       {query}
+  //       {data?.map((item: any, index: number) => {
+  //         return (
+  //           item?.text && <div key={index}>{item.text}</div>
+  //         );
+  //       })}
+  //     </div>
+  //   );
+  // }
+}
 
 export default function Home() {
+
+  const [query, setQuery] = React.useState('');
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
       <Head>
-        <title>Create Next App</title>
+        <title>Cyberoo</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
-        <h1 className="text-6xl font-bold">
-          Welcome to{' '}
-          <a className="text-blue-600" href="https://nextjs.org">
-            Next.js!
-          </a>
-        </h1>
-
-        <p className="mt-3 text-2xl">
-          Get started by editing{' '}
-          <code className="rounded-md bg-gray-100 p-3 font-mono text-lg">
-            pages/index.tsx
-          </code>
-        </p>
-
-        <div className="mt-6 flex max-w-4xl flex-wrap items-center justify-around sm:w-full">
-          <a
-            href="https://nextjs.org/docs"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Documentation &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Find in-depth information about Next.js features and API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Learn &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Learn about Next.js in an interactive course with quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Examples &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Discover and deploy boilerplate example Next.js projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Deploy &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+        <Heading></Heading>
+        {SearchBar(setQuery)}
+        {<ApolloProvider client={client}>{Result(query)}</ApolloProvider>}
       </main>
 
-      <footer className="flex h-24 w-full items-center justify-center border-t">
-        <a
-          className="flex items-center justify-center"
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className="ml-2 h-4" />
-        </a>
-      </footer>
+      <Footer></Footer>
+
     </div>
-  )
+  );
 }
