@@ -8,7 +8,6 @@
     "start": "next start"
   },
   "dependencies": {
-    "@ant-design/icons": "^4.7.0",
     "@apollo/client": "^3.5.8",
     "@cyberlab/cyberconnect": "^4.2.0",
     "@ethersproject/providers": "^5.5.3",
