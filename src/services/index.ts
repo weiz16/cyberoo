@@ -1,1 +1,2 @@
-export * from './graphql/index';
+export * from './core/index';
+export * from './apollo';
