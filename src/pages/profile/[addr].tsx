@@ -86,7 +86,7 @@ const ProfileContent: React.FC<{profile: ConnectionProfile}> = ({ profile })  =>
 
 const ProfilePage: React.FC<{addr: string}> = ({ addr }) => {
 
-  const { data, error } = useSWR<ConnectionProfile>(`${process.env.DEV_API_URL}${addr}`, fetcher);
+  const { data, error } = useSWR<ConnectionProfile>(`${process.env.CORE_API_URL}${addr}`, fetcher);
 
   if (error) return <div>Failed to load</div>
   if (!data) return <div>Loading...</div>
