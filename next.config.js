@@ -2,6 +2,6 @@
 module.exports = {
   reactStrictMode: true,
   env: {
-    CORE_API_URL: process.env.DEV_CORE_API_URL
+    CORE_API_URL: process.env.CORE_API_URL
   }
 }
