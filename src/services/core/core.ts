@@ -4,18 +4,10 @@
 // - Transfer - sent/recieved
 // - CyerConnect - following/followed
 
-import { concat } from "lodash";
 import { ConnectionProfile, ISourceConnectionProps, SourceConnection } from "./core.interface";
 import { aggregateSourceConnection } from "./core.utils";
 import { getConnectionsForCyberConnect } from "./cyber_connect/cyber_connect";
 import { getConnectionsForTransfer } from "./transfer/transfer";
-
-
-// Provider for connection data
-const CONNECTION_PROVIDERS: ((props: ISourceConnectionProps) => Promise<SourceConnection[]>)[] = [
-  (props: ISourceConnectionProps) => getConnectionsForCyberConnect(props),
-  (props: ISourceConnectionProps) => getConnectionsForTransfer(props)
-]; 
 
 
 /**
@@ -27,8 +19,10 @@ const CONNECTION_PROVIDERS: ((props: ISourceConnectionProps) => Promise<SourceCo
  export async function discoverConnection(props: ISourceConnectionProps): Promise<ConnectionProfile> {
   const { address } = props || {};
   // All source connections
-  const sourceConnections = concat(...await Promise.all(
-    CONNECTION_PROVIDERS.map(f => f?.(props))
-  ));
-  return aggregateSourceConnection(sourceConnections, address) || { address, connections: []};
-}
+  let { domain, connections, social } = await getConnectionsForCyberConnect(props);
+  connections = connections.concat(await getConnectionsForTransfer(props));
+  const connection =  aggregateSourceConnection(connections, address) || { address, connections: []};
+  connection.domain = domain || '';
+  connection.twitter = social?.twitter || '';
+  return connection;
+ }

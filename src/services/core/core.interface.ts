@@ -14,7 +14,10 @@ export type CyberConnectConnectionType = 'following' | 'followed' | 'friend';
 // profile - contains a list of all connections linked to the address
 export type ConnectionProfile = {
   address: string;
-  linkedConnections: Record<string, (Pick<SourceConnection, 'link' | 'payload' | 'type'>)[]>;
+  domain?: string;
+  images?: string[];
+  twitter?: string;
+  linkedConnections?: LinkedConnections;
 };
 
 // Source information for a profile
@@ -27,6 +30,8 @@ export type SourceConnection = {
   };
   payload?: SourceConnectionPayload; // Addtional payload for this connections
 };
+
+export type LinkedConnections = Record<string, (Pick<SourceConnection, 'link' | 'payload' | 'type'>)[]>;
 
 
 // Describe a connection in detail 
@@ -42,7 +47,6 @@ export type CyberConnectConnectionPayload = {
 
 
 // Props for finding a connection
-// Only support address for now, but more can be added 
 // Such as timestamp - If we only wanna to understand a connection between a specfic time
 export type ISourceConnectionProps = {
   address: string;

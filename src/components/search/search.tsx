@@ -1,18 +1,10 @@
 import debounce from 'lodash.debounce';
 import * as React from 'react';
 import { AiFillInfoCircle } from "react-icons/ai";
-import { getUserIdentity } from 'services';
 import { isAddressValid } from 'helpers';
 
 export interface ISearchBarProps {
-  updateResult: React.Dispatch<React.SetStateAction<ISearchBarQueryResult<any>>>;
-}
-
-export interface ISearchBarQueryResult<T> {
-  data?: T;
-  error?: {
-    message: string;
-  }
+  updateResult: (addr: string) => void;
 }
 
 
@@ -31,10 +23,7 @@ export function SearchBar(props: ISearchBarProps) {
     setValid(canQuery);
 
     // Perform search only if valid
-    if (canQuery) {
-      const identity = await getUserIdentity(currentValue);
-      props.updateResult({ data: identity });
-    }
+    props.updateResult(address as string);
   }, [props.updateResult]);
 
   // Debounce keydown handler to reduce search loads

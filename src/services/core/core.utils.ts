@@ -13,12 +13,13 @@ import { SourceConnection, ConnectionProfile } from "./index";
  */
  export function aggregateSourceConnection(sourceConnections: SourceConnection[], address: string): ConnectionProfile {
   const connection: ConnectionProfile = {
-    address, 
+    address,
     linkedConnections: {}
   }
   sourceConnections.forEach((c: SourceConnection) => {
     const { address, link, payload } = c || {};
     const { description, label } = c?.type || {};
+    connection.linkedConnections = connection.linkedConnections || {};
     connection.linkedConnections[address] = connection.linkedConnections[address] || [];
     connection.linkedConnections[address].push(
       {
@@ -27,7 +28,7 @@ import { SourceConnection, ConnectionProfile } from "./index";
           description,
           label
         },
-        payload
+        payload: payload || {}
       }
     );   
 

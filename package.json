@@ -11,7 +11,12 @@
   "dependencies": {
     "@apollo/client": "^3.5.8",
     "@cyberlab/cyberconnect": "^4.2.0",
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
     "@ethersproject/providers": "^5.5.3",
+    "@mui/material": "^5.4.0",
+    "d3": "^7.3.0",
+    "d3-force": "^3.0.0",
     "graphql": "^16.3.0",
     "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
@@ -19,7 +24,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",
-    "vis-network": "^9.1.0",
+    "swr": "^1.2.1",
     "web3": "^1.7.0",
     "web3modal": "^1.9.5"
   },

@@ -17,6 +17,10 @@ import { UserIdentity } from "./cyber_connect.interface";
 export const GET_IDENTITY = gql`query GetIdentity($address: String!) {
   identity(address: $address) {
     address
+    domain
+    social {
+      twitter
+    }
     followingCount
     followerCount
     followers(first:5) {

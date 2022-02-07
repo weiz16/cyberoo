@@ -9,29 +9,29 @@ import { ISourceConnectionProps, SourceConnection } from "../core.interface";
  export async function getConnectionsForTransfer(props: ISourceConnectionProps): Promise<SourceConnection[]> {
   const { address } = props || {};
   return [
-    {
-      address,
-      link: '12',
-      type: {
-        label: 'Transfer',
-        description: 'sent'
-      },
-      payload: {
-        timestamp: new Date().toUTCString(),
-        amount: '0.666'
-      }
-    },
-    {
-      address,
-      link: '123',
-      type: {
-        label: 'Transfer',
-        description: 'received',
-      },
-      payload: {
-        amount: '0.888',
-        timestamp: new Date().toUTCString()
-      }
-    }
+    // {
+    //   address,
+    //   link: '12',
+    //   type: {
+    //     label: 'Transfer',
+    //     description: 'sent'
+    //   },
+    //   payload: {
+    //     timestamp: new Date().toUTCString(),
+    //     amount: '0.666'
+    //   }
+    // },
+    // {
+    //   address,
+    //   link: '123',
+    //   type: {
+    //     label: 'Transfer',
+    //     description: 'received',
+    //   },
+    //   payload: {
+    //     amount: '0.888',
+    //     timestamp: new Date().toUTCString()
+    //   }
+    // }
   ];
 }
