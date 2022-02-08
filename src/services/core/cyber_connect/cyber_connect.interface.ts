@@ -18,6 +18,14 @@ export type Social = {
 
 export type BasicInfoConnection = {
   list: Connect[];
+  pageInfo: PageInfo;
+}
+
+export type PageInfo = {
+  startCursor: string;
+  endCursor: string;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
 }
 
 export type Connect = {

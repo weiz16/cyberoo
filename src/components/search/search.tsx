@@ -23,7 +23,9 @@ export function SearchBar(props: ISearchBarProps) {
     setValid(canQuery);
 
     // Perform search only if valid
-    props.updateResult(address as string);
+    if (canQuery) {
+      props.updateResult(currentValue as string);
+    }
   }, [props.updateResult]);
 
   // Debounce keydown handler to reduce search loads

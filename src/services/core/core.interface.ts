@@ -18,6 +18,7 @@ export type ConnectionProfile = {
   images?: string[];
   twitter?: string;
   linkedConnections?: LinkedConnections;
+  pageInfo?: any;
 };
 
 // Source information for a profile
@@ -31,8 +32,8 @@ export type SourceConnection = {
   payload?: SourceConnectionPayload; // Addtional payload for this connections
 };
 
-export type LinkedConnections = Record<string, (Pick<SourceConnection, 'link' | 'payload' | 'type'>)[]>;
-
+export type LinkedConnections = Record<string, PickedConnection[]>;
+export type PickedConnection = Pick<SourceConnection, 'link' | 'payload' | 'type'>;
 
 // Describe a connection in detail 
 export type SourceConnectionPayload = TransferConnectionPayload | CyberConnectConnectionPayload;

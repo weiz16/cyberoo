@@ -20,9 +20,11 @@ import { getConnectionsForTransfer } from "./transfer/transfer";
   const { address } = props || {};
   // All source connections
   let { domain, connections, social } = await getConnectionsForCyberConnect(props);
-  connections = connections.concat(await getConnectionsForTransfer(props));
+  const { connections: transferConnections, pageInfo } = await getConnectionsForTransfer(props);
+  connections = connections.concat(transferConnections);
   const connection =  aggregateSourceConnection(connections, address) || { address, connections: []};
   connection.domain = domain || '';
   connection.twitter = social?.twitter || '';
+  connection.pageInfo = pageInfo; 
   return connection;
- }
+}

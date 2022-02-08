@@ -49,6 +49,7 @@ describe('Core Api', () => {
             [CONNECTION_ADDRESS_A]: [
               {
                 link: CONNECTION_LINK,
+                payload: {},
                 type: {
                   description: 'following',
                   label: CYBER_CONNECT
@@ -58,6 +59,7 @@ describe('Core Api', () => {
             [CONNECTION_ADDRESS_B]: [
               {
                 link: CONNECTION_LINK,
+                payload: {},
                 type: {
                   description: 'followed',
                   label: CYBER_CONNECT

@@ -1,5 +1,5 @@
 import { ISourceConnectionProps, SourceConnection } from "../core.interface";
-import { BasicInfoConnection, Social } from "./cyber_connect.interface";
+import { BasicInfoConnection, PageInfo, Social } from "./cyber_connect.interface";
 import { getUserIdentity } from "./cyber_connect.query";
 
 export const CYBERCONNECT_URL = 'https://app.cyberconnect.me/address/';

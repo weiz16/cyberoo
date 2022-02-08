@@ -8,8 +8,9 @@ import { UserIdentity } from "./cyber_connect.interface";
  * @returns user identity
  */
  export function getUserIdentity(address: string): Promise<UserIdentity> {
-  return client.query({ query: GET_IDENTITY, variables: { address }}).then((res) => {
-    return res?.data?.identity || {};
+  return client.query({ query: GET_IDENTITY, variables: { address }}).then(async (res) => {
+    const identity: UserIdentity = res?.data?.identity || {};
+    return identity;
   });
 }
 
@@ -23,19 +24,27 @@ export const GET_IDENTITY = gql`query GetIdentity($address: String!) {
     }
     followingCount
     followerCount
-    followers(first:5) {
+    followers(first: 50) {
       list {
         address
         domain
-        
       }
+      pageInfo {
+        startCursor
+        endCursor
+        hasNextPage
+			}
     }
-    followings(first:5) {
+    followings(first: 50) {
       list {
         address
         domain
-        
       }
+      pageInfo {
+        startCursor
+        endCursor
+        hasNextPage
+			}
     }
   }
 }`;
