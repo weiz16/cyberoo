@@ -5,8 +5,8 @@ export type UserIdentity = {
   social: Social;
   avatar: string;
   joinTime: string;
-  followerCount: number;
-  followingCount: number;
+  followerCount: string;
+  followingCount: string;
   followings: BasicInfoConnection;
   followers: BasicInfoConnection;
   friends: BasicInfoConnection;

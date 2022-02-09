@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { client } from "../../index";
+import { client, ISourceConnectionProps } from "../../index";
 import { UserIdentity } from "./cyber_connect.interface";
 
 /**
@@ -7,15 +7,18 @@ import { UserIdentity } from "./cyber_connect.interface";
  * @param address eth address
  * @returns user identity
  */
- export function getUserIdentity(address: string): Promise<UserIdentity> {
-  return client.query({ query: GET_IDENTITY, variables: { address }}).then(async (res) => {
+ export function getUserIdentity(props: ISourceConnectionProps): Promise<UserIdentity> {
+  const { address, pageSize, offset } = props || {};
+  return client.query({ query: GET_IDENTITY, variables: { address, pageSize, offset: `${offset ? '-1' : offset} || 0` }}).then(async (res) => {
     const identity: UserIdentity = res?.data?.identity || {};
     return identity;
+  }).catch((_) => {
+    return {} as UserIdentity;
   });
 }
 
 // Quries
-export const GET_IDENTITY = gql`query GetIdentity($address: String!) {
+export const GET_IDENTITY = gql`query GetIdentity($address: String!, $pageSize: Int = 5, $offset: String! = "0") {
   identity(address: $address) {
     address
     domain
@@ -24,7 +27,7 @@ export const GET_IDENTITY = gql`query GetIdentity($address: String!) {
     }
     followingCount
     followerCount
-    followers(first: 50) {
+    followers(first: $pageSize, after: $offset) {
       list {
         address
         domain
@@ -35,7 +38,7 @@ export const GET_IDENTITY = gql`query GetIdentity($address: String!) {
         hasNextPage
 			}
     }
-    followings(first: 50) {
+    followings(first: $pageSize, after: $offset) {
       list {
         address
         domain

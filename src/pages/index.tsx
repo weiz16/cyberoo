@@ -1,8 +1,8 @@
 import Head from 'next/head';
 import React from 'react';
 
-import { SearchBar } from '../components/search/search';
 import Router from 'next/router';
+import SearchBar from '@components/search';
 
 export default function Home() {
 

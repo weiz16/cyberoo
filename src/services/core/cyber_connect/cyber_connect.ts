@@ -5,16 +5,14 @@ import { getUserIdentity } from "./cyber_connect.query";
 export const CYBERCONNECT_URL = 'https://app.cyberconnect.me/address/';
 
 /**
- * Get CyberConnection using cyperconnect api and convert data into source connection that 
- * can be aggregated 
+ * Extracts connection from cyber connect and label each connection found
  * @param props props
  * @returns connection
  */
- export async function getConnectionsForCyberConnect(props: ISourceConnectionProps): Promise<{ domain: string, social: Social, connections: SourceConnection[]}> {
-  const { address } = props || {};
+ export async function getConnectionsForCyberConnect(props: ISourceConnectionProps): Promise<SourceConnection[]> {
 
   let connections: SourceConnection[] = [];
-  const { followers, friends, followings, domain, social } = await getUserIdentity(address) || {} as BasicInfoConnection[];
+  const { followers, friends, followings } = await getUserIdentity(props) || {} as BasicInfoConnection[];
   [{
     data: followers?.list,
     type: {
@@ -48,7 +46,7 @@ export const CYBERCONNECT_URL = 'https://app.cyberconnect.me/address/';
     }
   });
 
-  return { domain, connections, social };
+  return connections;
 }
 
 

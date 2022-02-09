@@ -3,11 +3,13 @@
 // Connections will be identified as the following:
 // - Transfer - sent/recieved
 // - CyerConnect - following/followed
+// - OpenSea
 
+import { shuffle } from "lodash";
+import { getAddressAsset, getConnectionsForOpenSea, getUserIdentity } from ".";
 import { ConnectionProfile, ISourceConnectionProps, SourceConnection } from "./core.interface";
-import { aggregateSourceConnection } from "./core.utils";
 import { getConnectionsForCyberConnect } from "./cyber_connect/cyber_connect";
-import { getConnectionsForTransfer } from "./transfer/transfer";
+import { getAddressBalance, getConnectionsForTransfer } from "./transfer/transfer";
 
 
 /**
@@ -19,12 +21,38 @@ import { getConnectionsForTransfer } from "./transfer/transfer";
  export async function discoverConnection(props: ISourceConnectionProps): Promise<ConnectionProfile> {
   const { address } = props || {};
   // All source connections
-  let { domain, connections, social } = await getConnectionsForCyberConnect(props);
-  const { connections: transferConnections, pageInfo } = await getConnectionsForTransfer(props);
-  connections = connections.concat(transferConnections);
-  const connection =  aggregateSourceConnection(connections, address) || { address, connections: []};
-  connection.domain = domain || '';
-  connection.twitter = social?.twitter || '';
-  connection.pageInfo = pageInfo; 
+  const identity = await getUserIdentity({ address, pageSize: 1, offset: 0});
+  const { domain, followerCount, followingCount } = identity;
+  const connection: ConnectionProfile = {
+    address,
+    domain,
+    balance: await getAddressBalance(address),
+    followerCount,
+    followingCount,
+    connections: await getRecommendedConnections(address),
+    images: await getAddressAsset({ address })
+  };
   return connection;
+}
+
+/**
+ * Get random list of connections from cyber connect, etherscan, open sea 
+ * and shuffles the list
+ * @param address 
+ * @returns 
+ */
+export async function getRecommendedConnections(address: string): Promise<SourceConnection[]> {
+  const props = { 
+    address,
+    pageSize: 5,
+    offset: Math.floor(Math.random() * 11)
+  };
+  // get random connection from cyber connect/open sea / eterscan
+  const connections: SourceConnection[] = [...new Set((await Promise.all([
+    getConnectionsForTransfer(props),
+    getConnectionsForCyberConnect(props),
+    getConnectionsForOpenSea(props)
+  ])).flat())]
+;
+  return shuffle(connections);
 }

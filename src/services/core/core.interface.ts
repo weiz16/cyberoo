@@ -3,10 +3,10 @@
 // Current supported connection label
 // CyberConnection -> Connection is valid when you have followed or following or both
 // Transfer -> Connectino is valid when you have either sent or receive
-export type ConnectionLabel = 'CyberConnect' | 'Transfer';
+export type ConnectionLabel = 'CyberConnect' | 'Transfer' | 'OpenSea';
 
 // Current identified connection type - 'sent' | 'received' | 'following' etc...
-export type SourceConnectionType = TransferConnectionType | CyberConnectConnectionType;
+export type SourceConnectionType = TransferConnectionType | CyberConnectConnectionType | string;
 export type TransferConnectionType = 'sent' | 'received';
 export type CyberConnectConnectionType = 'following' | 'followed' | 'friend';
 
@@ -16,9 +16,10 @@ export type ConnectionProfile = {
   address: string;
   domain?: string;
   images?: string[];
-  twitter?: string;
-  linkedConnections?: LinkedConnections;
-  pageInfo?: any;
+  followerCount: string;
+  balance?: string;
+  followingCount: string;
+  connections?: SourceConnection[];
 };
 
 // Source information for a profile
@@ -29,27 +30,14 @@ export type SourceConnection = {
     description: SourceConnectionType,
     label: ConnectionLabel;
   };
-  payload?: SourceConnectionPayload; // Addtional payload for this connections
+  payload?: any; // Addtional payload for this connections
 };
-
-export type LinkedConnections = Record<string, PickedConnection[]>;
-export type PickedConnection = Pick<SourceConnection, 'link' | 'payload' | 'type'>;
-
-// Describe a connection in detail 
-export type SourceConnectionPayload = TransferConnectionPayload | CyberConnectConnectionPayload;
-export type TransferConnectionPayload = {
-  amount: string; // amount for this transfer
-  timestamp: string; // utc format, time this transfer is made
-}
-
-// Empty for now, CyberConnect has no more context for describing the connection
-export type CyberConnectConnectionPayload = {
-}
-
 
 // Props for finding a connection
 // Such as timestamp - If we only wanna to understand a connection between a specfic time
 export type ISourceConnectionProps = {
   address: string;
+  pageSize?: number;
+  offset?: number;
 }
 

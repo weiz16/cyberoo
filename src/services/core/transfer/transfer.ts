@@ -10,22 +10,43 @@ const ETHERSCAN_API_URL = 'https://api.etherscan.io/api';
 export function getTransactionURL(hash: string): string {
   return `https://etherscan.io/tx/${hash}`;
 }
+
+export function getAddressProfile(address: string): string {
+  return `https://etherscan.io/address/${address}`;
+}
+
 /**
- * Get transfer connection using eternscan api and convert data into source connection that 
- * can be aggregated
+ * Get balance of an address in eth format
+ * @param addrses 
+ * @returns 
+ */
+export async function getAddressBalance(address: string): Promise<string> {
+
+  const FIELDS: any = {
+    module: 'account',
+    action: 'balance',
+    address,
+    tag: 'latest',
+    apiKey: process.env.ETHERSCAN_API_KEY
+  };
+  
+  const ENDPOINT = `${ETHERSCAN_API_URL}?${Object.keys(FIELDS).map((key) => `${key}=${FIELDS[key]}`).join('&')}`
+  return await fetch(ENDPOINT, { method: 'GET'}).then(async (res) => {
+    const data = await res.json();
+    return convertWeiToEther(data?.result || '0');
+  }, () => {
+    return '00.00'
+  });
+}
+
+/**
+ * Extracts connection from eterscan and label each connection found
  * @param props props
  * @returns connection
  */
- export async function getConnectionsForTransfer(props: ISourceConnectionProps): Promise<{ connections: SourceConnection[], pageInfo: PageInfo}> {
-  const { address } = props || {};
-  const pageInfo: PageInfo = {
-    startCursor: "",
-    endCursor: "",
-    hasNextPage: false,
-    hasPreviousPage: false
-  };
-  
-  const transactions = await getNormalTransactionsByAddress(props.address);
+ export async function getConnectionsForTransfer(props: ISourceConnectionProps): Promise<SourceConnection[]> {
+  const { address, pageSize, offset } = props || {};
+  const transactions = await getNormalTransactionsByAddress(props.address, `${pageSize || 1}`, `${offset || 10}`);
   const connections: SourceConnection[]= transactions.map((tx) => {
     const isSender = address === tx.from;
     return {
@@ -41,7 +62,7 @@ export function getTransactionURL(hash: string): string {
       }
     };
   });
-  return { connections, pageInfo };
+  return connections;
 }
 
 /**
@@ -51,7 +72,7 @@ export function getTransactionURL(hash: string): string {
  * @param offset 
  * @returns 
  */
-export async function getNormalTransactionsByAddress(address: string, page = 1, offset = 10): Promise<EScanTransaction[]> {
+export async function getNormalTransactionsByAddress(address: string, page = '1', offset = '10'): Promise<EScanTransaction[]> {
 
   const FIELDS: any = {
     module: 'account',
@@ -59,7 +80,7 @@ export async function getNormalTransactionsByAddress(address: string, page = 1, 
     address,
     startBlock: '0',
     endBlock: '99999999',
-    page,
+    page: page === '0' ? '1' : page,
     offset,
     sort: 'asc',
     apiKey: process.env.ETHERSCAN_API_KEY

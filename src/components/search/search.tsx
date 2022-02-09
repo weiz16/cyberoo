@@ -3,13 +3,9 @@ import * as React from 'react';
 import { AiFillInfoCircle } from "react-icons/ai";
 import { isAddressValid } from 'helpers';
 
-export interface ISearchBarProps {
-  updateResult: (addr: string) => void;
-}
 
+const SearchBar: React.FC<{updateResult: (result: string) => void }> = ({ updateResult })  => {
 
-export function SearchBar(props: ISearchBarProps) {
- 
   const [valid, setValid] = React.useState<boolean>(false);
   const [address, setAddress] = React.useState<string>();
 
@@ -24,9 +20,9 @@ export function SearchBar(props: ISearchBarProps) {
 
     // Perform search only if valid
     if (canQuery) {
-      props.updateResult(currentValue as string);
+      updateResult(currentValue as string);
     }
-  }, [props.updateResult]);
+  }, [updateResult]);
 
   // Debounce keydown handler to reduce search loads
   const debouncedKeydown = debounce((ev: React.KeyboardEvent) => {
@@ -59,3 +55,5 @@ export function SearchBar(props: ISearchBarProps) {
 
   );
 }
+
+export default SearchBar;

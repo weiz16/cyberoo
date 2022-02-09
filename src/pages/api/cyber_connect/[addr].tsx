@@ -3,7 +3,7 @@
 
 import { isAddressValid } from "helpers";
 import { NextApiRequest, NextApiResponse } from "next";
-import { discoverConnection, getAddressAsset, getAddressEvent, getConnectionsForOpenSea } from "services";
+import { getConnectionsForCyberConnect } from "services";
 
 
 export default async function addressHandler(req: NextApiRequest, res: NextApiResponse) {
@@ -16,7 +16,7 @@ export default async function addressHandler(req: NextApiRequest, res: NextApiRe
     case 'GET':
       // Get data from your database
       if (typeof addr === 'string' && isAddressValid(addr)) {
-        const profile = await discoverConnection({ address: addr, pageSize: 5, offset: 0 });
+        const profile = await getConnectionsForCyberConnect({ address: addr, pageSize: 5, offset: 0 });
         res.status(200).json(profile);
       } else {
         res.status(405).end(`Address ['${addr}'] is not an valid address`);
