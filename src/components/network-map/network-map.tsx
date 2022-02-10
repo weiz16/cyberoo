@@ -5,11 +5,8 @@ import loadable from '@loadable/component';
 
 const ForceGraph2D = loadable(() => import('./graph'))
 
-import * as THREE from 'three';
-import {CSS2DRenderer, CSS2DObject} from 'three/examples/jsm/renderers/CSS2DRenderer.js';
-import { truncateAddress } from "helpers";
+import {CSS2DRenderer} from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 import { HexColorPicker } from "react-colorful";
-import ConnectToInjected from "web3modal/dist/providers/connectors/injected";
 
 
 const DEFAULT_COLOR = 'black';
