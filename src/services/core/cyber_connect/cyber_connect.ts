@@ -37,6 +37,7 @@ export const CYBERCONNECT_URL = 'https://app.cyberconnect.me/address/';
       connections = connections.concat(
         item.data.map((listItem) => {
           return {
+            sourceAddress: props?.address,
             address: listItem.address,
             link: getCyberConnectProfileLink(listItem.address),
             type: item.type

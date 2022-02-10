@@ -57,6 +57,7 @@ export async function getConnectionsForOpenSea(props: ISourceConnectionProps): P
     const { image_url } = asset || {};
     return {
       address: isSender ? to_account?.address : from_account?.address,
+      sourceAddress: address,
       link: event.permalink,
       type: {
         description: event.event_type,

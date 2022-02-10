@@ -1,5 +1,5 @@
 import { copyToClipboard, openLinkInTab, openProfileLink, truncateAddress } from "helpers";
-import { BasicInfoConnection, ConnectionProfile, getAddressProfile, getCyberConnectProfileLink, getFollowers, getFollowings, SourceConnection } from "services";
+import { BasicInfoConnection, ConnectionProfile, getAddressProfile, getCyberConnectProfileLink, getFollowers, getFollowings, getUserIdentity, SourceConnection } from "services";
 import { HiOutlineDuplicate } from "react-icons/hi";
 import useSWR from 'swr';
 import { Avatar, Box, Modal, Pagination, Popover, Typography } from "@mui/material";
@@ -8,6 +8,7 @@ import SourceAvatar from "@components/source-avatar";
 import SourceDescription from "@components/source-description";
 import HoverField from "@components/hover-field";
 import { startCase } from "lodash";
+import NetworkMap from "@components/network-map";
 
 const fetcher = async (
   input: RequestInfo,
@@ -20,7 +21,7 @@ const fetcher = async (
 
 const Header: React.FC<{}> = () => {
   return (
-    <div className="text-4xl font-bold p-4 border-b-2">
+    <div className="text-4xl bg-white font-bold p-4 border-b-2">
       Cyber
       <span className='text-yellow-300'>oo.</span>
     </div>
@@ -134,7 +135,6 @@ const ProfileFollower: React.FC<{profile: ConnectionProfile, type: 'followers' |
   
   const handleChange = (_: any, value: number) => {
     (type === 'followers' ? getFollowers : getFollowings)({ address: profile.address, pageSize, offset: (value - 1) * pageSize - 1 }).then((identity) => {
-      console.log('identity', type, identity);
       setUser(identity[type]);
     });
   };
@@ -176,13 +176,13 @@ const ProfileContentDetail: React.FC<{profile: ConnectionProfile, updater?: any 
 
   return (
     <div className="flex flex-col select-none ">
-    <div className="flex-col flex w-80 p-4 shadow-md border-b-2 box-border align-middle items-center self-start">
+    <div className="flex-col flex w-80 p-4 bg-white  shadow-lg rounded-lg box-border align-middle items-center self-start">
       <Avatar sx={{ width: 86, height: 86 }} src={profile?.images?.[0]}>
         {profile?.address}
       </Avatar>
       <div className="text-2xl mb-2 w-40 truncate text-center align-middle font-bold pt-2 ">{profile?.domain || profile?.address}</div>
       <CopyField text={address}>
-        <div className="flex p-2 text-sm flex items-center w-full bg-neutral-200 text-zinc-400 rounded-md ">
+        <div className="flex p-2 text-sm flex items-center w-full bg-gray-100 text-gray-600 rounded-md ">
           <div className="self-start">{truncateAddress(address, 33)}</div>
           {<HiOutlineDuplicate size={18} className="shrink-0 text-slate-800 ml-auto"></HiOutlineDuplicate>}
         </div>
@@ -230,15 +230,21 @@ const ProfileContent: React.FC<{profile: ConnectionProfile}> = ({ profile })  =>
   const [children, setChildren] = React.useState<ReactElement>(<></>);
   
   const handleClose = () => setOpen(false);
-  
   return (
     <>
       <ProfileContentDetail profile={profile} updater={{ setChildren, setOpen} } />
 
-      <div className="flex p-4 pr-0 w-full rounded-md ml-6 shadow-md border-b-2 box-border"> 
-        <div className="w-full h-full rounded-md mr-4">
+      <div className="flex flex-col w-full ml-6 bg-transparent">
+        <div className="flex  pr-0 w-full bg-white rounded-md shadow-lg border-b-2 box-border h-full"> 
+          <div className="w-full h-full rounded-md mr-4">
+            <NetworkMap profile={profile} showModal={(children) => {
+              setChildren(children);
+              setOpen(true);
+            }}></NetworkMap>
+          </div>
         </div>
       </div>
+
 
       <Modal
         open={open}
@@ -255,15 +261,31 @@ const ProfileContent: React.FC<{profile: ConnectionProfile}> = ({ profile })  =>
 
 const ProfilePage: React.FC<{addr: string}> = ({ addr }) => {
 
-  const { data, error } = useSWR<ConnectionProfile>(`${process.env.CORE_API_URL}${addr}`, fetcher);
+  const [error, setError] = React.useState(false);
+  const [data, setData] = React.useState(null);
 
-  if (error) return <div>Failed to load</div>
+  React.useEffect(() => {
+
+    fetch(`${process.env.CORE_API_URL}${addr}`).then(async (res) => {
+      if (res.status === 200) {
+        const profile = await res.json();
+        setData(profile);
+      } else {
+        setError(true);
+      }
+    }).catch((err) => {
+      setError(true);
+    });
+
+  }, [])
+
+  if (error) return <div>Error</div>
   if (!data) return <div>Loading...</div>
 
   return (
     <div>
       <Header></Header>
-      <div className="flex mt-2 p-5 box-border">
+      <div className="flex mt-2 p-5 box-border ">
         {error ? <Error address={addr} /> : <ProfileContent profile={data} />}
       </div>
     </div>

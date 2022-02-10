@@ -8,7 +8,7 @@ import moment from "moment";
  */
 export function openLinkInTab(url: string): void {
   if (!!url) {
-    window.open(url, '_blank');
+    window?.open(url, '_blank');
   }
 }
 

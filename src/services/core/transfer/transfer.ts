@@ -50,6 +50,7 @@ export async function getAddressBalance(address: string): Promise<string> {
   const connections: SourceConnection[]= transactions.map((tx) => {
     const isSender = address === tx.from;
     return {
+      sourceAddress: address,
       address: isSender ? tx.to : tx.from,
       link: getTransactionURL(tx.hash),
       type: {

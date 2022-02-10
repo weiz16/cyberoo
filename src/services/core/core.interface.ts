@@ -23,6 +23,7 @@ export interface ConnectionProfile extends UserIdentity {
 // Source information for a profile
 export type SourceConnection = {
   address: string;
+  sourceAddress: string;
   link: string; // redirection link
   type: { 
     description: SourceConnectionType,
@@ -30,6 +31,9 @@ export type SourceConnection = {
   };
   payload?: any; // Addtional payload for this connections
 };
+
+export type LinkedConnections = Record<string, SourceConnection[]>;
+
 
 // Props for finding a connection
 // Such as timestamp - If we only wanna to understand a connection between a specfic time
