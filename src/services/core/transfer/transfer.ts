@@ -32,10 +32,14 @@ export async function getAddressBalance(address: string): Promise<string> {
   
   const ENDPOINT = `${ETHERSCAN_API_URL}?${Object.keys(FIELDS).map((key) => `${key}=${FIELDS[key]}`).join('&')}`
   return await fetch(ENDPOINT, { method: 'GET'}).then(async (res) => {
-    const data = await res.json();
-    return convertWeiToEther(data?.result || '0');
+    try {
+      const data = await res.json();
+      return convertWeiToEther(data?.result || '0');
+    } catch (_)  {
+      return '00.00';
+    }
   }, () => {
-    return '00.00'
+    return '00.00';
   });
 }
 
@@ -47,7 +51,7 @@ export async function getAddressBalance(address: string): Promise<string> {
  export async function getConnectionsForTransfer(props: ISourceConnectionProps): Promise<SourceConnection[]> {
   const { address, pageSize, offset } = props || {};
   const transactions = await getNormalTransactionsByAddress(props.address, `${pageSize || 1}`, `${offset || 10}`);
-  const connections: SourceConnection[]= transactions.map((tx) => {
+  const connections: SourceConnection[]= (transactions || [])?.map((tx) => {
     const isSender = address === tx.from;
     return {
       sourceAddress: address,
@@ -90,8 +94,12 @@ export async function getNormalTransactionsByAddress(address: string, page = '1'
   
   const ENDPOINT = `${ETHERSCAN_API_URL}?${Object.keys(FIELDS).map((key) => `${key}=${FIELDS[key]}`).join('&')}`
   return await fetch(ENDPOINT, { method: 'GET'}).then(async (res) => {
-    const data = await res.json();
-    return data?.result || [];
+    try {
+      const data = await res.json();
+      return data?.result || [];
+    } catch (_) {
+      return [];
+    }
   }, () => {
     return [];
   });
