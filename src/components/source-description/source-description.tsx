@@ -1,11 +1,12 @@
 import HoverField from "@components/hover-field";
-import { truncateAddress } from "helpers";
+import { fromNow, truncateAddress } from "helpers";
 import { startCase } from "lodash";
 import React from "react";
 import { SourceConnection } from "services";
 
 const SourceDescription: React.FC<{connection: SourceConnection, address: string}> = ({ connection, address })  => {
-  const { link, type: { label, description } } = connection || {};
+  const { link } = connection || {};
+  const { label, description } = connection?.type || {};
   const { amount, timestamp  } = connection?.payload || {};
   const truncatedAddress = truncateAddress(address, 12);
   return (
@@ -45,13 +46,16 @@ const SourceDescription: React.FC<{connection: SourceConnection, address: string
              <a  target="_blank" className="inline-block flex " href={link}>{`To ${truncatedAddress}`}</a>
             </div>
           </div>
-          <div className="flex flex-col ml-auto shrink-0 font-bold text-rose-600">
+          <div className="flex flex-col flex-col ml-auto items-end shrink-0 font-bold text-rose-600">
              <HoverField extraClass={'font-bold text-sm'} 
                 text={amount} 
                 start={<span>-</span>}
                 end={<span className="pl-1">eth</span>}
               >
              </HoverField>
+             <div className="text-zinc-400 text-sm font-normal">
+              {fromNow(timestamp)}
+            </div>
           </div>
       </div>
       )}
@@ -64,13 +68,16 @@ const SourceDescription: React.FC<{connection: SourceConnection, address: string
             <a  target="_blank" className="inline-block flex " href={link}>{`From ${truncatedAddress}`}</a>
             </div>
           </div>
-          <div className="flex ml-auto shrink-0 font-bold text-emerald-600">
+          <div className="flex ml-auto items-end flex-col shrink-0 font-bold text-emerald-600">
             <HoverField extraClass={'font-bold text-sm'} 
                 text={amount} 
                 start={ <span>+</span>}
                 end={<span className="pl-1">eth</span>}
               >
              </HoverField>
+            <div className="text-zinc-400 text-sm font-normal">
+              {fromNow(timestamp)}
+            </div>
           </div>
         </div>
       )}

@@ -57,6 +57,7 @@ export async function getAddressBalance(address: string): Promise<string> {
         label: 'Transfer'
       },
       payload: {
+        tx,
         timestamp: tx.timeStamp,
         amount: convertWeiToEther(tx.value)
       }
@@ -66,7 +67,7 @@ export async function getAddressBalance(address: string): Promise<string> {
 }
 
 /**
- * Get a list of transaction by address
+ * Get a list of most recent transaction by address
  * @param address 
  * @param page 
  * @param offset 
@@ -82,7 +83,7 @@ export async function getNormalTransactionsByAddress(address: string, page = '1'
     endBlock: '99999999',
     page: page === '0' ? '1' : page,
     offset,
-    sort: 'asc',
+    sort: 'desc',
     apiKey: process.env.ETHERSCAN_API_KEY
   };
   

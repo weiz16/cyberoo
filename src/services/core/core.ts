@@ -21,14 +21,10 @@ import { getAddressBalance, getConnectionsForTransfer } from "./transfer/transfe
  export async function discoverConnection(props: ISourceConnectionProps): Promise<ConnectionProfile> {
   const { address } = props || {};
   // All source connections
-  const identity = await getUserIdentity({ address, pageSize: 1, offset: 0});
-  const { domain, followerCount, followingCount } = identity;
+  const identity = await getUserIdentity({ address, pageSize: 20, offset: 0}) || {};
   const connection: ConnectionProfile = {
-    address,
-    domain,
+    ...identity,
     balance: await getAddressBalance(address),
-    followerCount,
-    followingCount,
     connections: await getRecommendedConnections(address),
     images: await getAddressAsset({ address })
   };

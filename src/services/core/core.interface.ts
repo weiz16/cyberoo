@@ -1,5 +1,7 @@
 // Interfaces
 
+import { UserIdentity } from "./cyber_connect/cyber_connect.interface";
+
 // Current supported connection label
 // CyberConnection -> Connection is valid when you have followed or following or both
 // Transfer -> Connectino is valid when you have either sent or receive
@@ -12,13 +14,9 @@ export type CyberConnectConnectionType = 'following' | 'followed' | 'friend';
 
 // Describes a connection profile
 // profile - contains a list of all connections linked to the address
-export type ConnectionProfile = {
-  address: string;
-  domain?: string;
+export interface ConnectionProfile extends UserIdentity {
   images?: string[];
-  followerCount: string;
   balance?: string;
-  followingCount: string;
   connections?: SourceConnection[];
 };
 

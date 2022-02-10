@@ -1,5 +1,6 @@
 // Common helpers used by different modules of the app
 
+import moment from "moment";
 
 /**
  * Given a url, open it in new tab
@@ -10,6 +11,20 @@ export function openLinkInTab(url: string): void {
     window.open(url, '_blank');
   }
 }
+
+export function fromNow(timestamp: string): string {
+  return moment(Number(timestamp) * 1000).fromNow();
+}
+
+/**
+ * Open address profile
+ * @param address 
+ */
+export function openProfileLink(address: string): void {
+  if (!!address && process.env.SERVER_UR) {
+    openLinkInTab(`${process.env.SERVER_UR}/profile/${address}`);
+  }
+} 
 
 /**
  * Copy a link to clipboard

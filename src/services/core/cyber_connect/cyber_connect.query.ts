@@ -7,9 +7,9 @@ import { UserIdentity } from "./cyber_connect.interface";
  * @param address eth address
  * @returns user identity
  */
- export function getUserIdentity(props: ISourceConnectionProps): Promise<UserIdentity> {
+ export function getUserIdentity(props: ISourceConnectionProps, query = GET_IDENTITY): Promise<UserIdentity> {
   const { address, pageSize, offset } = props || {};
-  return client.query({ query: GET_IDENTITY, variables: { address, pageSize, offset: `${offset ? '-1' : offset} || 0` }}).then(async (res) => {
+  return client.query({ query, variables: { address, pageSize, offset: `${offset === 0? '-1' : offset || 0}` }}).then(async (res) => {
     const identity: UserIdentity = res?.data?.identity || {};
     return identity;
   }).catch((_) => {
@@ -17,8 +17,51 @@ import { UserIdentity } from "./cyber_connect.interface";
   });
 }
 
+export function getFollowers(props: ISourceConnectionProps): Promise<UserIdentity> {
+  return getUserIdentity(props, GET_FOLLOWER);
+}
+
+export function getFollowings(props: ISourceConnectionProps): Promise<UserIdentity> {
+  return getUserIdentity(props, GET_FOLLOWING);
+}
+
 // Quries
-export const GET_IDENTITY = gql`query GetIdentity($address: String!, $pageSize: Int = 5, $offset: String! = "0") {
+const GET_FOLLOWER = gql`query GetIdentity($address: String!, $pageSize: Int = 5, $offset: String! = "0") {
+  identity(address: $address) {
+    address
+    followers(first: $pageSize, after: $offset) {
+      list {
+        address
+        domain
+      }
+      pageInfo {
+        startCursor
+        endCursor
+        hasNextPage
+			}
+    }
+  }
+}`;
+
+const GET_FOLLOWING = gql`query GetIdentity($address: String!, $pageSize: Int = 5, $offset: String! = "0") {
+  identity(address: $address) {
+    address
+    followings(first: $pageSize, after: $offset) {
+      list {
+        address
+        domain
+      }
+      pageInfo {
+        startCursor
+        endCursor
+        hasNextPage
+			}
+    }
+  }
+}`;
+
+
+const GET_IDENTITY = gql`query GetIdentity($address: String!, $pageSize: Int = 5, $offset: String! = "0") {
   identity(address: $address) {
     address
     domain
