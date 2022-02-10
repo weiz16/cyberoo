@@ -1,11 +1,9 @@
 import React, { CSSProperties, ReactElement } from "react";
-// import { ForceGraph2D } from "react-force-graph";
 import { aggregateSourceConnection, ConnectionProfile, getConnectionsForCyberConnect, getConnectionsForOpenSea, getConnectionsForTransfer, getRecommendedConnections, SourceConnection } from "services";
 import loadable from '@loadable/component';
 
 const ForceGraph2D = loadable(() => import('./graph'))
 
-import {CSS2DRenderer} from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 import { HexColorPicker } from "react-colorful";
 
 
@@ -129,21 +127,17 @@ const NetworkMap: React.FC<{ profile: ConnectionProfile, showModal: (children: R
   };
 
 
-  const extraRenderers = [new CSS2DRenderer()];
-
   return (
     <div className="flex flex-col">
       <ForceGraph2D
           width={500}
           height={500}
-          extraRenderers={extraRenderers}
           graphData={data}
           onNodeClick={(node: any) => onNodeClicked(node)}
           nodeColor={(node: any) => {
             return mainNodes[node.id] || DEFAULT_COLOR;
           }}
           nodeLabel={(node: any) => `${node.id}`}
-          nodeThreeObjectExtend={true}
           />
     </div>
   );
