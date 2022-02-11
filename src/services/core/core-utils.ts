@@ -16,20 +16,20 @@ import { SourceConnection, LinkedConnections } from "./index";
   sourceConnections.forEach((c: SourceConnection) => {
     const { address, link, payload, sourceAddress } = c || {};
     const { description, label } = c?.type || {};
-    combinedConnections[address] = combinedConnections[address] || [];
-    combinedConnections[address].push(
-      {
-        address,
-        sourceAddress,
-        link,
-        type: {
-          description,
-          label
-        },
-        payload: payload || {}
-      }
-    );   
-
+    if (address && sourceAddress) {
+      combinedConnections[sourceAddress] = combinedConnections[sourceAddress] || [];
+      combinedConnections[sourceAddress].push(
+        {
+          address,
+          link,
+          type: {
+            description,
+            label
+          },
+          payload: payload || {}
+        }
+      );   
+    }
   });
   return combinedConnections;
 }

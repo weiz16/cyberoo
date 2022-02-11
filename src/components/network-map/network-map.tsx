@@ -1,15 +1,16 @@
 import React, { CSSProperties, ReactElement } from "react";
-import { aggregateSourceConnection, ConnectionProfile, getConnectionsForCyberConnect, getConnectionsForOpenSea, getConnectionsForTransfer, getRecommendedConnections, SourceConnection } from "services";
+import { aggregateSourceConnection, ConnectionProfile, getConnectionsForCyberConnect, getConnectionsForOpenSea, getConnectionsForTransfer, getRecommendedConnections, LinkedConnections, SourceConnection } from "services";
 import loadable from '@loadable/component';
 
 const ForceGraph2D = loadable(() => import('./graph'))
 
 import { HexColorPicker } from "react-colorful";
+import { uniq, uniqBy } from "lodash";
 
 
 const DEFAULT_COLOR = 'black';
 
-const NodeExplorer: React.FC<{ node: any, initColor: string, onUpdate: (color: string, connections: SourceConnection[]) => void }> = ({ node, initColor, onUpdate }) => {
+const NodeExplorer: React.FC<{ node: any, initColor: string, initConnections: LinkedConnections, onUpdate: (color: string, connections: SourceConnection[]) => void }> = ({ node,  initConnections, initColor, onUpdate }) => {
   const [color, setColor] = React.useState(initColor);
 
   const style: CSSProperties = {
@@ -47,6 +48,8 @@ const NodeExplorer: React.FC<{ node: any, initColor: string, onUpdate: (color: s
     
   };
 
+  const profile = initConnections[node.id];
+
   const buttonClass = "p-2 mb-2 bg-yellow-300 text-center truncate text-color-black cursor-pointer rounded-lg"
   return (
     <div className="flex justify-start flex-col absolute top-1/2 p-4 items-center rounded-lg left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6/12 h-2/3 bg-white">
@@ -60,6 +63,18 @@ const NodeExplorer: React.FC<{ node: any, initColor: string, onUpdate: (color: s
             onUpdate(color, []);
           }
         }/>
+      </div>
+      <div className="flex flex-col p-2 m-2">
+        {profile?.map((p) => {
+          return (
+            <div className="flex flex-col">
+              <div>{p.type.description}</div>
+              <div>{p.type.label}</div>
+              <div>{p.address}</div>
+              <div>{p.sourceAddress}</div>
+            </div>
+          );
+        })}
       </div>
       <div className="mr-auto mt-4 mb-4">
         Expand on this node to find more connections
@@ -82,14 +97,14 @@ const NetworkMap: React.FC<{ profile: ConnectionProfile, showModal: (children: R
     [profile?.address]: 'red'
   });
 
-  const [connections, setConnections] = React.useState<SourceConnection[]>([]);
+  const [connections, setConnections] = React.useState<SourceConnection[]>(profile?.connections || []);
 
-  profile.connections = [...(profile?.connections || []), ...connections ];
-  const initConnections = aggregateSourceConnection(profile.connections || []);
-
+  const allConnections = [ ...connections ];
+  const initConnections = aggregateSourceConnection(connections || []);
+  
   const onNodeClicked = (node: any) : void => {
-    showModal(<NodeExplorer node={node} initColor={mainNodes?.[node?.id] as string || DEFAULT_COLOR} onUpdate={(color, connections) => {
-      const mergedConnections = [...(profile?.connections || []), ...connections || []];
+    showModal(<NodeExplorer node={node} initConnections={initConnections} initColor={mainNodes?.[node?.id] as string || DEFAULT_COLOR} onUpdate={(color, connections) => {
+      const mergedConnections = [...(allConnections || []), ...connections || []];
       if (connections?.length) {
         setConnections(mergedConnections);
       }
@@ -98,34 +113,21 @@ const NetworkMap: React.FC<{ profile: ConnectionProfile, showModal: (children: R
     }}/>);
   };
 
-  const otherAddresses = Object.keys(initConnections);
-  const otherNodes: { id: string} [] = otherAddresses?.map( addr => {
-    return {
-      id: addr,
-      payload: initConnections[addr]
-    };
-  });
 
-  let links: any[] = [];
-  otherAddresses.forEach((addrKey) => {
-    initConnections[addrKey].forEach((c) => {
-      const link = links.find((l) => l.id === c.address);
-      if (!link) {
-        links.push({
-          source: c.sourceAddress, 
-          target: c.address
-        });
-      }
-    });
-  });
+  // Get all unique address to create nodes
+  const profileAddresses = Object.keys(initConnections);
+  const uniqAddrs = uniq(uniqBy(allConnections, (c) => c?.address).map((c) => c?.address).concat(profileAddresses)).filter(Boolean);
+
+  let links: any[] = allConnections?.map((c) => (
+    {
+      source: c.sourceAddress,
+      target: c.address
+    }
+  ));
   const data = {
-    nodes: [
-      ...[{ id: profile.address, mainNode: true, connections: profile.connections }],
-      ...otherNodes
-    ],
+    nodes: uniqAddrs.map((addr) => ({ id: addr })),
     links
   };
-
 
   return (
     <div className="flex flex-col">

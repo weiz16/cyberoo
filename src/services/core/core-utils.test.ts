@@ -1,4 +1,4 @@
-import { aggregateSourceConnection } from "./core.utils";
+import { aggregateSourceConnection } from "./core-utils";
 
 describe('Core Api', () => {
   const SEARCH_ADDRESS = '0xxxxxxxx';
@@ -15,6 +15,7 @@ describe('Core Api', () => {
     it('combine results properly', () => {
       expect(aggregateSourceConnection([
         {
+          sourceAddress: SEARCH_ADDRESS,
           address: CONNECTION_ADDRESS_A,
           link: CONNECTION_LINK,
           type: {
@@ -23,6 +24,16 @@ describe('Core Api', () => {
           }
         },
         {
+          sourceAddress: CONNECTION_ADDRESS_A,
+          address: CONNECTION_ADDRESS_B,
+          link: CONNECTION_LINK,
+          type: {
+            description: 'friend',
+            label: CYBER_CONNECT
+          }
+        },
+        {
+          sourceAddress: SEARCH_ADDRESS,
           address: CONNECTION_ADDRESS_B,
           link: CONNECTION_LINK,
           type: {
@@ -31,6 +42,16 @@ describe('Core Api', () => {
           }
         },
         {
+          sourceAddress: CONNECTION_ADDRESS_B,
+          address: SEARCH_ADDRESS,
+          link: CONNECTION_LINK,
+          type: {
+            description: 'followed',
+            label: CYBER_CONNECT
+          }
+        },
+        {
+          sourceAddress: SEARCH_ADDRESS,
           address: CONNECTION_ADDRESS_C,
           link: CONNECTION_LINK,
           type: {
@@ -42,44 +63,62 @@ describe('Core Api', () => {
             timestamp: TRANSFER_TIME
           }
         }
-      ], SEARCH_ADDRESS)).toEqual(
+      ])).toEqual(
         {
-          address: SEARCH_ADDRESS,
-          linkedConnections: {
-            [CONNECTION_ADDRESS_A]: [
-              {
-                link: CONNECTION_LINK,
-                payload: {},
-                type: {
-                  description: 'following',
-                  label: CYBER_CONNECT
-                }
+          [SEARCH_ADDRESS]: [
+            {
+              address: CONNECTION_ADDRESS_A,
+              link: CONNECTION_LINK,
+              payload: {},
+              type: {
+                description: 'following',
+                label: CYBER_CONNECT
+              } 
+            },
+            {
+              address: CONNECTION_ADDRESS_B,
+              link: CONNECTION_LINK,
+              payload: {},
+              type: {
+                description: 'followed',
+                label: CYBER_CONNECT
               }
-            ],
-            [CONNECTION_ADDRESS_B]: [
+            },
+            {
+              address: CONNECTION_ADDRESS_C,
+              link: CONNECTION_LINK,
+              type: {
+                description: 'sent',
+                label: TRANSFER
+              },
+              payload: {
+                amount: 0.00666,
+                timestamp: TRANSFER_TIME
+              }
+            }
+          ],
+          [CONNECTION_ADDRESS_A]: [
+            {
+              link: CONNECTION_LINK,
+              payload: {},
+              address: CONNECTION_ADDRESS_B,
+              type: {
+                description: 'friend',
+                label: CYBER_CONNECT
+              }
+            }
+          ],
+          [CONNECTION_ADDRESS_B]: [
               {
+                address: SEARCH_ADDRESS,
                 link: CONNECTION_LINK,
                 payload: {},
                 type: {
                   description: 'followed',
                   label: CYBER_CONNECT
-                }
               }
-            ],
-            [CONNECTION_ADDRESS_C]: [
-              {
-                link: CONNECTION_LINK,
-                type: {
-                  description: 'sent',
-                  label: TRANSFER
-                },
-                payload: {
-                  amount: 0.00666,
-                  timestamp: TRANSFER_TIME
-                }
-              }
-            ]
-          }
+            }
+          ]
         }
       );
     });

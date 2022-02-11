@@ -51,7 +51,7 @@ export async function getAddressBalance(address: string): Promise<string> {
  export async function getConnectionsForTransfer(props: ISourceConnectionProps): Promise<SourceConnection[]> {
   const { address, pageSize, offset } = props || {};
   const transactions = await getNormalTransactionsByAddress(props.address, `${pageSize || 1}`, `${offset || 10}`);
-  const connections: SourceConnection[]= (transactions || [])?.map((tx) => {
+  const connections: SourceConnection[]= (transactions || [])?.filter(Boolean).map((tx) => {
     const isSender = address === tx.from;
     return {
       sourceAddress: address,

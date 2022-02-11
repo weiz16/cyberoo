@@ -35,7 +35,7 @@ export const CYBERCONNECT_URL = 'https://app.cyberconnect.me/address/';
   }].forEach((item) => {
     if (item?.data?.length) {
       connections = connections.concat(
-        item.data.map((listItem) => {
+        item.data.filter(Boolean).map((listItem) => {
           return {
             sourceAddress: props?.address,
             address: listItem.address,

@@ -45,9 +45,9 @@ export async function getRecommendedConnections(address: string): Promise<Source
   };
   // get random connection from cyber connect/open sea / eterscan
   const connections: SourceConnection[] = [...new Set((await Promise.all([
-    getConnectionsForTransfer(props),
+    // getConnectionsForTransfer(props),
     getConnectionsForCyberConnect(props),
-    getConnectionsForOpenSea(props)
+    // getConnectionsForOpenSea(props)
   ])).flat())]
 ;
   return shuffle(connections);

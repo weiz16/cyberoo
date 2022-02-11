@@ -23,7 +23,7 @@ export interface ConnectionProfile extends UserIdentity {
 // Source information for a profile
 export type SourceConnection = {
   address: string;
-  sourceAddress: string;
+  sourceAddress?: string;
   link: string; // redirection link
   type: { 
     description: SourceConnectionType,

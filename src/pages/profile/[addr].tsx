@@ -65,7 +65,7 @@ const CopyField: React.FC<{text: string, children: ReactElement }> = ({ text, ch
       onMouseLeave={handlePopoverClose}
     >
       <div className="cursor-pointer" onClick={handleCopied}>
-        {children}
+        {children && children}
       </div>
       </Typography>
       <Popover
