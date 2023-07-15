@@ -2,32 +2,27 @@ import debounce from 'lodash.debounce';
 import * as React from 'react';
 import { AiFillInfoCircle } from "react-icons/ai";
 import { isAddressValid } from 'helpers';
+import Router from 'next/router';
 
 
-const SearchBar: React.FC<{updateResult: (result: string) => void }> = ({ updateResult })  => {
+const SearchBar: React.FC<{ }> = ({ })  => {
 
   const [valid, setValid] = React.useState<boolean>(false);
   const [address, setAddress] = React.useState<string>();
 
-  const handleKeyDown = React.useCallback(async (ev: React.KeyboardEvent) => {
-    // Store current input state
-    const currentValue = (ev?.target as HTMLInputElement)?.value;
-    setAddress(currentValue);
+  // Debounce keydown handler to reduce search loads
+  const debouncedKeydown = debounce((ev: React.KeyboardEvent) => {
+    const address = (ev.target as HTMLInputElement)?.value;
+    setAddress(address);
 
     // Store valid state 
-    const canQuery = isAddressValid(currentValue);
+    const canQuery = isAddressValid(address);
     setValid(canQuery);
 
     // Perform search only if valid
     if (canQuery) {
-      updateResult(currentValue as string);
-    }
-  }, [updateResult]);
-
-  // Debounce keydown handler to reduce search loads
-  const debouncedKeydown = debounce((ev: React.KeyboardEvent) => {
-    handleKeyDown(ev);
-  }, 500);
+        Router.push(`profile/${address}`);
+    }  }, 200);
 
   const showInvalidUI = !valid && address;
 

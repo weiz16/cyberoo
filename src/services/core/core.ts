@@ -25,8 +25,8 @@ import { getAddressBalance, getConnectionsForTransfer } from "./transfer/transfe
   const connection: ConnectionProfile = {
     ...identity,
     balance: await getAddressBalance(address),
-    connections: await getRecommendedConnections(address),
-    images: await getAddressAsset({ address })
+    connections: await getRecommendedConnections(address)
+    // images: await getAddressAsset({ address })
   };
   return connection;
 }

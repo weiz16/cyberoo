@@ -20,9 +20,7 @@ export default function Home() {
           <span className='text-amber-500'>oo.</span>
         </h1>
         <h3 className='pt-2' >Explore connections</h3>
-        <SearchBar updateResult={(address) => {
-          Router.push(`profile/${address}`);
-        }}></SearchBar>
+        <SearchBar></SearchBar>
       </main>
 
     </div>

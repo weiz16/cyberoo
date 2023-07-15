@@ -12,7 +12,7 @@ describe('Core Api', () => {
 
   describe('aggregateSourceConnection', () => {
 
-    it('combine results properly', () => {
+    it('Should aggregate a list of connection based on their address', () => {
       expect(aggregateSourceConnection([
         {
           sourceAddress: SEARCH_ADDRESS,

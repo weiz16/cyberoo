@@ -20,32 +20,19 @@ const NodeExplorer: React.FC<{ node: any, initColor: string, initConnections: Li
   };
 
   const addConnections = async (type: 'cyberconnect' | 'transfer' | 'opensea' | 'recommended') => {
-    let connections: SourceConnection[] = [];
-    
     const props = { 
       address: node.id,
       pageSize: 5,
       offset: Math.floor(Math.random() * 11)
     };
 
-    if (type === 'recommended') {
-      connections = await getRecommendedConnections(node.id);
+    const connectionConfig = {
+      'recommended': () => getRecommendedConnections(node.id),
+      'transfer': () => getConnectionsForTransfer(props),
+      'opensea': () => getConnectionsForOpenSea(props),
+      'cyberconnect': () => getConnectionsForCyberConnect(props),
     }
-
-    if (type === 'transfer') {
-      connections = await getConnectionsForTransfer(props);
-    }
-
-    if (type === 'opensea') {
-      connections = await getConnectionsForOpenSea(props);
-    }
-
-    if (type === 'cyberconnect') {
-      connections = await getConnectionsForCyberConnect(props);
-    }
-
-    onUpdate(color, connections);
-    
+    onUpdate(color, await connectionConfig[type]());
   };
 
   const profile = initConnections[node.id];

@@ -9,6 +9,7 @@ import SourceDescription from "@components/source-description";
 import HoverField from "@components/hover-field";
 import { startCase } from "lodash";
 import NetworkMap from "@components/network-map";
+import { useRouter } from "next/router";
 
 const fetcher = async (
   input: RequestInfo,
@@ -259,19 +260,25 @@ const ProfileContent: React.FC<{profile: ConnectionProfile}> = ({ profile })  =>
   );
 };
 
-const ProfilePage: React.FC<{addr: string}> = ({ addr }) => {
+
+const ProfilePage = () => {
+
+  const router = useRouter()
+  const { address } = router.query;
 
   const [error, setError] = React.useState(false);
   const [data, setData] = React.useState(null);
 
   React.useEffect(() => {
-
-    fetch(`${process.env.CORE_API_URL}${addr}`).then(async (res) => {
+    if (!address) {
+      return;
+    }
+    fetch(`${process.env.CORE_API_URL}${address}`).then(async (res) => {
       if (res.status === 200) {
         const profile = await res.json();
         setData(profile);
       } else {
-        setError(true);
+        setError(true); 
       }
     }).catch((err) => {
       setError(true);
@@ -279,23 +286,17 @@ const ProfilePage: React.FC<{addr: string}> = ({ addr }) => {
 
   }, [])
 
-  if (error) return <div>Error</div>
+  if (error) return <div>Error, {address}</div>
   if (!data) return <div>Loading...</div>
 
   return (
     <div>
       <Header></Header>
       <div className="flex mt-2 p-5 box-border ">
-        {error ? <Error address={addr} /> : <ProfileContent profile={data} />}
+        {error ? <Error address={address as string} /> : <ProfileContent profile={data} />}
       </div>
     </div>
   );
 };
 
 export default ProfilePage;
-
-
-export async function getServerSideProps(context: any): Promise<{props: any}> {
-  const { addr } = context.params;
-  return { props: { addr }};
-};

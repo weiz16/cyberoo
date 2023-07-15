@@ -1,5 +1,5 @@
 import { ISourceConnectionProps, SourceConnection } from "../core.interface";
-import { BasicInfoConnection, PageInfo, Social } from "./cyber_connect.interface";
+import { BasicInfoConnection } from "./cyber_connect.interface";
 import { getUserIdentity } from "./cyber_connect.query";
 
 export const CYBERCONNECT_URL = 'https://app.cyberconnect.me/address/';
@@ -17,7 +17,7 @@ export const CYBERCONNECT_URL = 'https://app.cyberconnect.me/address/';
     data: followers?.list,
     type: {
       label: 'CyberConnect',
-      description: 'followed' 
+      description: 'follower' 
     }
   },{
     data: followings?.list,
@@ -33,7 +33,7 @@ export const CYBERCONNECT_URL = 'https://app.cyberconnect.me/address/';
       description: 'friend'
     }
   }].forEach((item) => {
-    if (item?.data?.length) {
+    if (item.data?.length) {
       connections = connections.concat(
         item.data.filter(Boolean).map((listItem) => {
           return {

@@ -6,7 +6,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getConnectionsForOpenSea } from "services";
 
 
-export default async function addressHandler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const {
     query: { addr },
     method,

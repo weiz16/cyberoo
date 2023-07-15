@@ -3,10 +3,10 @@
 
 import { isAddressValid } from "helpers";
 import { NextApiRequest, NextApiResponse } from "next";
-import { discoverConnection, getAddressAsset, getAddressEvent, getConnectionsForOpenSea } from "services";
+import { discoverConnection } from "services";
 
 
-export default async function addressHandler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const {
     query: { addr },
     method,
@@ -14,10 +14,14 @@ export default async function addressHandler(req: NextApiRequest, res: NextApiRe
 
   switch (method) {
     case 'GET':
-      // Get data from your database
-      if (typeof addr === 'string' && isAddressValid(addr)) {
-        const profile = await discoverConnection({ address: addr, pageSize: 5, offset: 0 });
-        res.status(200).json(profile);
+      // Get data from database
+      if (isAddressValid(addr as string)) {
+        try {
+          const profile = await discoverConnection({ address: addr as string, pageSize: 5, offset: 0 });
+          res.status(200).json(profile);
+        } catch (_) {
+          res.status(405).end('Unexpected Error!');
+        }
       } else {
         res.status(405).end(`Address ['${addr}'] is not an valid address`);
       }
